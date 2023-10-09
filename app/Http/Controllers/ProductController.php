@@ -14,7 +14,7 @@ class ProductController extends Controller
         if (isset($request->keyword)) {
             $keyword = $request->keyword;
             $products = Product::where('name', 'like', "%$keyword%")
-                ->paginate();
+                ->paginate(2);
         }
 
         $successMessage = '';
@@ -25,12 +25,12 @@ class ProductController extends Controller
         } elseif ($request->session()->has('successMessage2')) {
             $successMessage = $request->session()->get('successMessage2');
         }
-        return view('products.index', compact('products'));
+        return view('admin.products.index', compact('products'));
     }
     public function create()
     {
         $categories = Category::get();
-        return view('products.create' ,compact('categories'));
+        return view('admin.products.create' ,compact('categories'));
     }
     public function store(Request $request)
     {
@@ -62,7 +62,7 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
         $categories = Category::all();
-        return view('products.edit', compact('product', 'categories'));
+        return view('admin.products.edit', compact('product', 'categories'));
     }
     public function update(Request $request, $id)
     {
@@ -92,16 +92,41 @@ class ProductController extends Controller
 
         return redirect()->route('product.index');
     }
-    public function destroy(Request $request , $id)
-    {
-        $product = Product::find($id);
-        $product->delete();
-        $request->session()->flash('successMessage2', 'Xóa thành công');
 
-        return redirect()->route('product.index');
+
+    public function destroy($id)
+    {
+        $product = Product::onlyTrashed()->findOrFail($id);
+        $product->forceDelete();
+        return redirect()->back()->with('successMessage2', 'Deleted successfully');
     }
+    public  function softdeletes($id)
+    {
+        date_default_timezone_set("Asia/Ho_Chi_Minh");
+        $product = Product::findOrFail($id);
+        $product->deleted_at = date("Y-m-d h:i:s");
+        $product->save();
+        // $request->session()->flash('successMessage2', 'Deleted successfully');
+        return redirect()->route('product.index')->with('successMessage2', 'Xóa thành công');
+    }
+    public  function trash()
+    {
+        $products = Product::onlyTrashed()->get();
+        $param = ['products'    => $products];
+        return view('admin.products.trash', $param);
+    }
+    public function restoredelete($id)
+    {
+        $product = Product::withTrashed()->where('id', $id);
+        $product->restore();
+        return redirect()->route('product.trash')->with('successMessage3', 'Restore thành công');
+        // return redirect()->route('category.trash');
+    }
+
+
+
     public function show(Product $product)
     {
-        return view('products.show', compact('product'));
+        return view('admin.products.show', compact('product'));
     }
 }

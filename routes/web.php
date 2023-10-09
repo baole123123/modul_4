@@ -4,8 +4,10 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ShopController;
+use App\Http\Controllers\AuthController;
 
-
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,89 +20,53 @@ use App\Http\Controllers\ProductController;
 |
 */
 
-//bài tập 1
-// Route::get('login', function () {
-//     return view('bai1.login');
-// });
-// Route::post('/login', function (Illuminate\Http\Request $request){
-//     $username = $request->username;
-//     $password = $request->password;
-//     if ($username == 'admin' && $password == '123') {
-//         return view('bai1.welcom_admin');
-//     }
-//     return view('bai1.no_welcom');
-// });
+
+Route::put('categorie/softdeletes/{id}', [CategoryController::class, 'softdeletes'])->name('categorie.softdeletes');
+Route::get('categorie/trash', [CategoryController::class, 'trash'])->name('categorie.trash');
+Route::put('categorie/restoredelete/{id}', [CategoryController::class, 'restoredelete'])->name('categorie.restoredelete');
+Route::get('categorie/destroy/{id}', [CategoryController::class, 'destroy'])->name('categorie_destroy');
 
 
-//bài tập 2
-// Route::get('product' , function(){
-//     return view ('bai2.product');
-// });
-// Route::post('/product' , function  (Illuminate\Http\Request $request) {
-//     $product = $request->product;
-//     $price = $request->price;
-//     $percent = $request->percent;
-
-//     $amount = $price * $percent * 0.1;
-
-//     return view('bai2.display', compact([ 'amount', 'product', 'price', 'percent']));
-
-// });
+Route::resource('categorie', CategoryController::class);
+// Route::resource('borrowing', BorrowingController::class);
 
 
-//bài tập 3
-// Route::get('dictionary' , function(){
-//         return view ('bai3.dictionary');
-//     });
-// Route::post('/dictionary', function (Illuminate\Http\Request $request) {
-//     $dictionary = [
-//         "apple" => "quả táo",
-//         "banana" => "quả chuối",
-//         "cat" => "con mèo",
-//         "dog" => "con chó"
-//     ];
-
-//     foreach($dictionary as $anh => $viet){
-//         if($anh == $request->dictionary){
-//         return view('bai3.show' , compact(['viet']));
-//         }
-//         if($viet == $request->dictionary){
-//          return view('bai3.show1' , compact(['anh']));
-
-//         }
-
-//     }
-//     return view('bai3.loi');
-
-// });
+Route::put('product/softdeletes/{id}', [ProductController::class, 'softdeletes'])->name('product.softdeletes');
+Route::get('product/trash', [ProductController::class, 'trash'])->name('product.trash');
+Route::put('product/restoredelete/{id}', [ProductController::class, 'restoredelete'])->name('product.restoredelete');
+Route::get('product/destroy/{id}', [ProductController::class, 'destroy'])->name('product_destroy');
 
 
-//truyền tham số bắt buộc
-// Route::get('/users/{id}/profile/{profile}' , function ($id , $profile){
-//     echo 'tích 2 tham số:  ' . $id * $profile;
-// });
+Route::resource('product', ProductController::class);
+
+// Route::get('shop/master', [ShopController::class, 'master'])->name('shop.master');
+Route::get('shop/master', [ShopController::class, 'index'])->name('shop.master');
+
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('admin.login');
+Route::get('/welcome', [AuthController::class, 'welcome']);
+Route::get('/logout', [AuthController::class, 'logout']);
+Route::get('/regenerate', [AuthController::class, 'regenerateSession']);
+
+Route::get('/register', [ShopControllerntroller::class, 'register'])->name('shop.register');
+Route::get('shop/register', [ShopController::class, 'register'])->name('shop.register');
+Route::post('shop/checkRegister', [ShopController::class, 'checkRegister'])->name('shop.checkRegister');
+Route::post('shop/checklogin', [ShopController::class, 'checklogin'])->name('shop.checklogin');
+Route::get('shop/login', [ShopController::class, 'login'])->name('shop.login');
+
+Route::get('admin/login1', [CategoryController::class, 'login'])->name('admin.login1');
+Route::post('admin/checklogin', [CategoryController::class, 'checklogin'])->name('admin.checklogin');
 
 
-    // tạo route liệt kê
-    // Route::get('/user' , [UserController::class , 'index'])->name('user.index');
-    // //tạo route thêm
-    // Route::get('/user/create' , [UserController::class , 'create'])->name('user.create');
-    // //tạo route sửa
-    // Route::get('/user/edit/{id}' , [UserController::class , 'edit'])->name('user.edit');
-    // //
-    // Route::post('/user/store' , [UserController::class , 'store'])->name('user.store');
-    // //tạo route update
-    // Route::put('/user/{id}', [UserController::class , 'update'])->name('user.update');
-    // //tạo route xóa
-    // Route::delete('/user/{id}', [UserController::class , 'delete'])->name('user.delete');
-    // //xem chi tiết
-    // Route::get('/users/{user}', [UserController::class , 'show'])->name('user.show');
 
-    // Route::get('/' , function (){
-    //     return view ('admin.master');
-    // });
-    Route::resource('categorie', CategoryController::class);
-    // Route::resource('borrowing', BorrowingController::class);
+Route::get('shop/home', [ShopController::class, 'index'])->name('shop.home');
+Route::get('shop/detail/{id}', [ShopController::class, 'detail'])->name('shop.detail');
 
-    Route::resource('product', ProductController::class);
+
+Route::get('/cart', [ShopController::class, 'cart'])->name('shop.cart');
+Route::get('add-to-cart/{id}', [ShopController::class, 'addToCart'])->name('add.to.cart');
+Route::patch('update-cart', [ShopController::class, 'update'])->name('update.cart');
+Route::delete('remove-from-cart', [ShopController::class, 'remove'])->name('remove.from.cart');
+
+
 
