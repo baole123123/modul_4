@@ -2,19 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProduct;
+use App\Http\Requests\UpdateProduct;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $products = Product::with('category')->paginate(4);
+        $this->authorize('viewAny', Product::class);
+        $products = Product::orderBy('id', 'DESC')->paginate(4);
         if (isset($request->keyword)) {
             $keyword = $request->keyword;
             $products = Product::where('name', 'like', "%$keyword%")
-                ->paginate(2);
+                ->paginate(4);
         }
 
         $successMessage = '';
@@ -30,88 +36,126 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::get();
-        return view('admin.products.create' ,compact('categories'));
+        $this->authorize('create', Product::class);
+
+        return view('admin.products.create', compact('categories'));
     }
-    public function store(Request $request)
+    public function store(StoreProduct $request)
     {
-        $product = new Product();
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->price = $request->price;
-        $product->quantity = $request->quantity;
-        $product->status = $request->status;
-        $product->category_id = $request->category_id;
-
-
-        // xử lý ảnh
-        $fieldName = 'image';
-        if ($request->hasFile($fieldName)) {
-            $fullFileNameOrigin = $request->file($fieldName)->getClientOriginalName();
-            $fileNameOrigin = pathinfo($fullFileNameOrigin, PATHINFO_FILENAME);
-            $extenshion = $request->file($fieldName)->getClientOriginalExtension();
-            $fileName = $fileNameOrigin . '-' . rand() . '_' . time() . '.' . $extenshion;
-            $path = 'storage/' . $request->file($fieldName)->storeAs('public/images', $fileName);
-            $path = str_replace('public/', '', $path);
-            $product->image = $path;
+        try {
+            // dd($request->all());
+            $product = new Product();
+            $product->name = $request->name;
+            $product->description = $request->description;
+            $product->price = $request->price;
+            $product->quantity = $request->quantity;
+            $product->status = $request->status;
+            $product->category_id = $request->category_id;
+            $fieldName = 'image';
+            if ($request->hasFile($fieldName)) {
+                $fullFileNameOrigin = $request->file($fieldName)->getClientOriginalName();
+                $fileNameOrigin = pathinfo($fullFileNameOrigin, PATHINFO_FILENAME);
+                $extenshion = $request->file($fieldName)->getClientOriginalExtension();
+                $fileName = $fileNameOrigin . '-' . rand() . '_' . time() . '.' . $extenshion;
+                $path = 'storage/' . $request->file($fieldName)->storeAs('public/images', $fileName);
+                $path = str_replace('public/', '', $path);
+                $product->image = $path;
+            }
+            $product->save();
+            Log::info('Product store successfully. ID: ' . $product->id);
+            return redirect()->route('products.index')->with('success', __('sys.store_item_success'));
+        } catch (QueryException $e) {
+            Log::error($e->getMessage());
+            return redirect()->route('products.index')->with('error', __('sys.store_item_error'));
         }
-        $product->save();
-        $request->session()->flash('successMessage', 'Thêm thành công');
-        return redirect()->route('product.index');
     }
+
     public function edit($id)
     {
-        $product = Product::find($id);
-        $categories = Category::all();
-        return view('admin.products.edit', compact('product', 'categories'));
-    }
-    public function update(Request $request, $id)
-    {
-        $product = Product::find($id);
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->price = $request->price;
-        $product->quantity = $request->quantity;
-        $product->status = $request->status;
-        $product->category_id = $request->category_id;
+        try {
+            $item = Product::findOrFail($id);
+        $this->authorize('update', Product::class);
 
+            $categories = Category::all();
 
-        // xử lý ảnh
-        $fieldName = 'image';
-        if ($request->hasFile($fieldName)) {
-            $fullFileNameOrigin = $request->file($fieldName)->getClientOriginalName();
-            $fileNameOrigin = pathinfo($fullFileNameOrigin, PATHINFO_FILENAME);
-            $extenshion = $request->file($fieldName)->getClientOriginalExtension();
-            $fileName = $fileNameOrigin . '-' . rand() . '_' . time() . '.' . $extenshion;
-            $path = 'storage/' . $request->file($fieldName)->storeAs('public/images', $fileName);
-            $path = str_replace('public/', '', $path);
-            $product->image = $path;
+            $params = [
+                'item' => $item ,
+                'categories' => $categories
+            ];
+            return view("admin.products.edit", $params);
+        } catch (ModelNotFoundException $e) {
+            Log::error($e->getMessage());
+            return redirect()->route('products.index')->with('error', __('sys.item_not_found'));
         }
-
-        $product->save();
-        $request->session()->flash('successMessage1', 'Cập nhật thành công');
-
-        return redirect()->route('product.index');
     }
 
+    public function update(UpdateProduct $request, $id)
+    {
+        try {
+            $product = Product::findOrFail($id);
+            $product->name = $request->name;
+            $product->description = $request->description;
+            $product->price = $request->price;
+            $product->quantity = $request->quantity;
+            $product->status = $request->status;
+            $product->category_id = $request->category_id;
 
+
+            // xử lý ảnh
+            $fieldName = 'image';
+            if ($request->hasFile($fieldName)) {
+                $fullFileNameOrigin = $request->file($fieldName)->getClientOriginalName();
+                $fileNameOrigin = pathinfo($fullFileNameOrigin, PATHINFO_FILENAME);
+                $extenshion = $request->file($fieldName)->getClientOriginalExtension();
+                $fileName = $fileNameOrigin . '-' . rand() . '_' . time() . '.' . $extenshion;
+                $path = 'storage/' . $request->file($fieldName)->storeAs('public/images', $fileName);
+                $path = str_replace('public/', '', $path);
+                $product->image = $path;
+            }
+            $product->save();
+            Log::info('Product updated', ['id' => $product->id]);
+            return redirect()->route('products.index')->with('success', __('sys.update_item_success'));
+        } catch (ModelNotFoundException $e) {
+            Log::error($e->getMessage());
+            return redirect()->route('products.index')->with('error', __('sys.item_not_found'));
+        } catch (QueryException $e) {
+            Log::error($e->getMessage());
+            return redirect()->route('products.index')->with('error', __('sys.update_item_error'));
+        }
+    }
     public function destroy($id)
     {
-        $product = Product::onlyTrashed()->findOrFail($id);
-        $product->forceDelete();
-        return redirect()->back()->with('successMessage2', 'Deleted successfully');
+        try {
+            $item = Product::withTrashed()->findOrFail($id);
+        $this->authorize('delete', Product::class);
+
+            $item->forceDelete(); // Xóa vĩnh viễn mục từ thùng rác
+            Log::info('Product message', ['context' => 'value']);
+            return redirect()->route('products.index')->with('success', __('sys.destroy_item_success1'));
+        } catch (ModelNotFoundException $e) {
+            Log::error($e->getMessage());
+            return redirect()->route('products.index')->with('error', __('sys.item_not_found'));
+        } catch (QueryException  $e) {
+            Log::error($e->getMessage());
+            return redirect()->route('products.index')->with('error', __('sys.destroy_item_error'));
+        }
     }
     public  function softdeletes($id)
     {
         date_default_timezone_set("Asia/Ho_Chi_Minh");
         $product = Product::findOrFail($id);
+        $this->authorize('forceDelete', Product::class);
+
         $product->deleted_at = date("Y-m-d h:i:s");
         $product->save();
         // $request->session()->flash('successMessage2', 'Deleted successfully');
-        return redirect()->route('product.index')->with('successMessage2', 'Xóa thành công');
+        return redirect()->route('products.index')->with('success', __('sys.destroy_item_success'));
     }
     public  function trash()
     {
         $products = Product::onlyTrashed()->get();
+        $this->authorize('viewtrash', Product::class);
+
         $param = ['products'    => $products];
         return view('admin.products.trash', $param);
     }
@@ -119,7 +163,7 @@ class ProductController extends Controller
     {
         $product = Product::withTrashed()->where('id', $id);
         $product->restore();
-        return redirect()->route('product.trash')->with('successMessage3', 'Restore thành công');
+        return redirect()->route('product.trash')->with('success', __('sys.restore_item_success'));
         // return redirect()->route('category.trash');
     }
 

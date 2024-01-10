@@ -1,107 +1,92 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-<form action="{{route('product.store')}}" method="POST" enctype="multipart/form-data">
-@csrf
-<label for="name">Tên:<br></label>
-  <input type="text" id="lname" name="name"><br>
+@extends('admin.master')
 
-  <label for="">Thuộc danh mục:<br></label>
-            <select name="category_id" style="width:177px;">
-                <?php foreach ($categories as $category) : ?>
-                    <option value="<?php echo $category->id; ?>"><?php echo $category->name; ?></option>
-                <?php endforeach; ?>
-            </select>
-            <br><br>
+@section('content')
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light">Thêm Mới </span>
+    </h4>
+    <form action="{{route('products.store')}}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <div class="app-ecommerce">
+            <!-- Add Product -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                <div class="d-flex flex-column justify-content-center">
 
-  <label for="lname">Giá:</label><br>
-  <input type="text" id="lname" name="price"><br>
-  <label for="lname">Mô tả:</label><br>
-  <input type="text" id="lname" name="description"><br>
-  <label for="lname">Số lượng:</label><br>
-  <input type="text" id="lname" name="quantity"><br>
-  <div>
-        Trạng thái:<br>
-        <select name="status" class="form-control">
-                <option value="0">Còn hàng</option>
-                <option value="1">Hết hàng</option>
-        </select><br>
-    </div>
-  <label>Ảnh:</label><br>
-  <input type="file" name="image" value="" ><br><br>
-  <input type="submit" value="Submit">
+                </div>
 
+            </div>
+            <div class="row">
+                <!-- First column-->
+                <div class="col-12 col-lg-12">
+                    <!-- Product Information -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="ecommerce-customer-name">Tên</label>
+                                        <input type="text" class="form-control" placeholder="Tên" name="name" value="{{ old('name') }}">
+                                        @error('name') <div class="alert alert-danger">{{ $message }}</div> @enderror
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="ecommerce-customer-name">Mô tả</label>
+                                        <input type="text" class="form-control" placeholder="Mô tả" name="description" value="{{ old('description') }}">
+                                        @error('description') <div class="alert alert-danger">{{ $message }}</div> @enderror
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="ecommerce-customer-name">Giá</label>
+                                        <input type="text" class="form-control" placeholder="Giá" name="price" value="{{ old('price') }}">
+                                        @error('price') <div class="alert alert-danger">{{ $message }}</div> @enderror
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="ecommerce-customer-name">Ảnh</label>
+                                        <input type="file" class="form-control" placeholder="Ảnh" name="image" value="{{ old('image') }}">
+                                        @error('image') <div class="alert alert-danger">{{ $message }}</div> @enderror
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="ecommerce-customer-name">Số lượng</label>
+                                        <input type="text" class="form-control" placeholder="Số lượng" name="quantity" value="{{ old('quantity') }}">
+                                        @error('quantity') <div class="alert alert-danger">{{ $message }}</div> @enderror
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label mb-1" for="status-org">Trạng thái </label>
+                                    <select class="form-control" name="status" value="{{ old('status') }}">
+                                        <option value="">Tất cả</option>
+                                        <option value="0">Còn</option>
+                                        <option value="1">Hết</option>
+                                    </select>
+                                    @error('status') <div class="alert alert-danger">{{ $message }}</div> @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Danh mục</label>
+                                    <select name="category_id" class="form-select" value="{{ old('category_id') }}">
+                                        <option value="">Vui lòng chọn</option>
+                                        @foreach($categories as $index => $categorie)
+                                        <option value="{{ $categorie->id }}">{{ $categorie->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('category_id') <div class="alert alert-danger">{{ $message }}</div> @enderror
+                                </div>
+                            </div>
+                            <div class="d-flex align-content-center flex-wrap gap-3">
+                                <a href="{{route('products.index')}}" class="btn btn-label-secondary">Trở Về</a>
+                                <button type="submit" class="btn btn-primary">Thêm</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 
-
-  <a href="{{ route('product.index') }}" class="btn">Back</a>
-</form>
-
-</body>
-</html>
-<style>
-    .btn {
-  display: inline-block;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  background-color: #f44336; /* Đỏ */
-  color: #ffffff; /* Trắng */
-  text-decoration: none;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.btn:hover {
-  background-color: #d32f2f; /* Đỏ nhạt khi hover */
-}
-    /* CSS cho nút Submit */
-input[type="submit"] {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  background-color: #4caf50; /* Màu xanh lá cây */
-  color: #ffffff; /* Màu chữ trắng */
-  font-size: 16px;
-  cursor: pointer;
-}
-
-/* CSS cho các nhãn và ô nhập liệu */
-label {
-  font-weight: bold;
-}
-
-input[type="text"],
-input[type="file"] {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  width: 100%;
-  box-sizing: border-box;
-  font-size: 14px;
-}
-
-input[type="file"] {
-  margin-bottom: 10px;
-}
-
-/* CSS cho toàn bộ biểu mẫu */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f2f2f2;
-  padding: 20px;
-}
-
-form {
-  max-width: 400px;
-  margin: 0 auto;
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-}
-</style>
+@endsection

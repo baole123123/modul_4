@@ -1,26 +1,27 @@
 <?php
-
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Notifications\Notifiable;
 class Group extends Model
 {
+    protected $table ='groups';
     use HasFactory;
-    protected $dates = [
-        'created_at',
-        'updated_at',
-    ];
-    protected $fillable = [
-         'name','delete_at'
-    ];
-    protected $primaryKey = 'id';
-    protected $table = 'groups';
-    public $timestamps = true;
-
-    public function roles()
+    use Notifiable;
+    protected $fillable = ['name'];
+    public function users()
     {
-        return $this->belongsToMany(Role::class,'group_role','group_id','role_id');
+        return $this->hasMany(User::class, 'group_id', 'id');
+    }
+    public function role()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+    public function scopesearch($query)
+    {
+        if ($key = request()->search) {
+            $query = $query->where('name', 'like', '%' . $key . '%');
+        }
+        return $query;
     }
 }

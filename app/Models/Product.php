@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
+    const ACTIVE = 0;
+    const INACTIVE = 1;
     use HasFactory,SoftDeletes;
     protected $dates = [
         'created_at',

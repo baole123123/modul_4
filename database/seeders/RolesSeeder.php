@@ -13,10 +13,18 @@ class RolesSeeder extends Seeder
      */
     public function run(): void
     {
-        $item = new Role();
-        $item->name = "Cu bự";
-        $item->group_name = "cu bé";
+        $tables = ['categories', 'products', 'orders', 'groups', 'ordetail', 'customers', 'users'];
+        $actions = ['viewAny', 'view', 'create', 'update', 'delete', 'restore', 'forceDelete','viewtrash'];
 
-        $item->save();
+        foreach ($tables as $table) {
+            foreach ($actions as $action) {
+                $item = new Role();
+                $item->name = $table . '_' . $action;
+                $item->group_name = $table;
+                $item->timestamps = false; // Vô hiệu hóa timestamps
+
+                $item->save();
+            }
+        }
     }
 }

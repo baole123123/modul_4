@@ -34,6 +34,26 @@
                     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
                         <button class="btn btn-danger btn-sm remove-from-cart"><i class="fa fa-trash-o"></i></button>
                     </td>
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.1/dist/sweetalert2.min.css">
+                                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+                                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.1/dist/sweetalert2.min.js"></script>
+                                    @if (session('successMessage'))
+                                    <script>
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: '<h6>{{ session('successMessage') }}</h6>',
+                                            showConfirmButton: false,
+                                            timer: 2000,
+                                            width: '300px',
+                                            customClass: {
+                                                popup: 'animated bounce',
+                                            },
+                                            background: '#F4F4F4',
+                                            iconColor: '#00A65A',
+                                        });
+                                    </script>
+
+                                    @endif
                 </tr>
             @endforeach
         @endif
@@ -45,7 +65,7 @@
         <tr>
             <td colspan="5" class="text-right">
             <a href="javascript:history.back()" class="text-dark px-2"><i class="fa fa-angle-left"></i> Quay lại trang</a>
-                <button class="btn btn-success">Checkout</button>
+            <a href="http://127.0.0.1:8000/shop/checkOuts" class="btn btn-success">Thanh toán</a>
             </td>
         </tr>
     </tfoot>

@@ -1,96 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('admin.master')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-
-<body>
-    <form action="{{route('categorie.store')}}" method="POST" enctype="multipart/form-data">
+@section('content')
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light">Thêm Mới </span>
+    </h4>
+    <form action="{{route('categories.store')}}" method="POST" enctype="multipart/form-data">
         @csrf
-        <label for="fname">Name:</label><br>
-        <input type="text" id="fname" name="name"><br>
-        <label for="lname">Mô tả:</label><br>
-        <input type="text" id="lname" name="description"><br>
-        @error('name')
-        <div style="color: red">{{ $message }}</div>
-        @enderror
+        <div class="app-ecommerce">
+            <!-- Add Product -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                <div class="d-flex flex-column justify-content-center">
 
-        <input type="submit" value="Submit">
+                </div>
 
-        <a href="{{ route('categorie.index') }}" class="btn">Back</a>
+            </div>
+            <div class="row">
+                <!-- First column-->
+                <div class="col-12 col-lg-12">
+                    <!-- Product Information -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="ecommerce-customer-name">Tên</label>
+                                        <input type="text" class="form-control" placeholder="Tên" name="name" value="{{ old('name') }}">
+                                        @error('name') <div class="alert alert-danger">{{ $message }}</div> @enderror
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                <div class="mb-3">
+                                        <label class="form-label" for="ecommerce-customer-name">Mô tả</label>
+                                        <input type="text" class="form-control" placeholder="Mô tả" name="description" value="{{ old('description') }}">
+                                        @error('description') <div class="alert alert-danger">{{ $message }}</div> @enderror
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-content-center flex-wrap gap-3">
+                    <a href="{{route('categories.index')}}" class="btn btn-label-secondary">Trở Về</a>
+                    <button type="submit" class="btn btn-primary">Thêm</button>
+                </div>
+                </div>
+            </div>
+        </div>
     </form>
+</div>
 
-</body>
-
-</html>
-<style>
-    .btn {
-        display: inline-block;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        background-color: #f44336;
-        /* Đỏ */
-        color: #ffffff;
-        /* Trắng */
-        text-decoration: none;
-        font-size: 16px;
-        cursor: pointer;
-    }
-
-    .btn:hover {
-        background-color: #d32f2f;
-        /* Đỏ nhạt khi hover */
-    }
-
-    /* CSS cho nút Submit */
-    input[type="submit"] {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        background-color: #4caf50;
-        /* Màu xanh lá cây */
-        color: #ffffff;
-        /* Màu chữ trắng */
-        font-size: 16px;
-        cursor: pointer;
-    }
-
-    /* CSS cho các nhãn và ô nhập liệu */
-    label {
-        font-weight: bold;
-    }
-
-    input[type="text"],
-    input[type="file"] {
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        width: 100%;
-        box-sizing: border-box;
-        font-size: 14px;
-    }
-
-    input[type="file"] {
-        margin-bottom: 10px;
-    }
-
-    /* CSS cho toàn bộ biểu mẫu */
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f2f2f2;
-        padding: 20px;
-    }
-
-    form {
-        max-width: 400px;
-        margin: 0 auto;
-        background-color: #ffffff;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    }
-</style>
+@endsection

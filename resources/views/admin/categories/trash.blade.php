@@ -1,45 +1,12 @@
 @extends('admin.master')
 @section('content')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.1/dist/sweetalert2.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.1/dist/sweetalert2.min.js"></script>
-    @if (session('successMessage3'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: '<h6>{{ session('successMessage3') }}</h6>',
-                showConfirmButton: false,
-                timer: 2000,
-                width: '300px',
-                customClass: {
-                    popup: 'animated bounce',
-                },
-                background: '#F4F4F4',
-                iconColor: '#00A65A',
-            });
-        </script>
-    @elseif(session('successMessage2'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: '<h6>{{ session('successMessage2') }}</h6>',
-                showConfirmButton: false,
-                timer: 2000,
-                width: '300px',
-                customClass: {
-                    popup: 'animated bounce',
-                },
-                background: '#F4F4F4',
-                iconColor: '#00A65A',
-            });
-        </script>
-    @endif
+
     <h2 class="offset-4">Thùng rác</h2>
     <div class="table-responsive pt-3">
         <table class="table table-hover" border="1">
-            <thead style="background: linear-gradient(to bottom, #A208C8 , #0768F1)">
-                <tr>
-                    <th style="width:35% ; color:white">
+        <thead style="background-color: #D81B60; color: white;">
+    <tr>
+        <th style="width: 35%;">
                         STT
                     </th>
                     <th style="color: white">
@@ -49,11 +16,32 @@
                         Mô tả
                     </th>
                     <th style="color: white">
-                        Action
+                        Thao tác
                     </th>
                 </tr>
             </thead>
             <tbody>
+            @if (session('success') || session('error'))
+    <div class="card-header pt-2 pb-0">
+        @if (session('success'))
+            <div class="alert alert-success" role="alert">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="alert alert-danger" role="alert">
+                {{ session('error') }}
+            </div>
+        @endif
+    </div>
+    <script>
+        setTimeout(function() {
+            document.querySelectorAll('.alert').forEach(function(alert) {
+                alert.style.display = 'none';
+            });
+        }, 2000); // Thời gian trễ 2 giây (2000ms)
+    </script>
+@endif  
                 @foreach ($categories as $key => $categorie)
                     <tr data-expanded="true" class="item-{{ $categorie->id }}">
                         <td>{{ $key + 1 }}</td>
@@ -65,9 +53,9 @@
                         <form action="{{ route('categorie.restoredelete', $categorie->id) }}" method="POST">
                                 @csrf
                                 @method('put')
-                                <button type="submit" class="btn btn-success">Restore</button>
+                                <button type="submit" class="btn btn-success">Khôi phục</button>
                                 <a href="{{ route('categorie_destroy', $categorie->id) }}" id="{{ $categorie->id }}"
-                                    class="btn btn-danger">Delete</a>
+                                    class="btn btn-danger">Xóa</a>
                             </form>
                         </td>
                 @endforeach

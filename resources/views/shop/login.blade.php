@@ -74,6 +74,8 @@
             </div>
             <div class="form-group">
                 <button type="submit">Đăng nhập</button>
+                <p>Nếu bạn chưa có tài khoản đăng nhập, hãy <a href="{{ route('shop.register') }}">nhấn vào đây</a> để đăng ký.</p>
+
             </div>
         </form>
     </div>

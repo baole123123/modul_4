@@ -15,8 +15,8 @@ class GroupsSeeder extends Seeder
     public function run(): void
     {
         $item = new Group();
-        $item->name = "Cu bự";
-        $item->delete_at = '2023-3-12';
+        $item->name = "Super Admin";
+        // $item->delete_at = '2023-3-13';
 
         $item->save();
     }
