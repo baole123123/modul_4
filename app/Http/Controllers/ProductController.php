@@ -16,22 +16,14 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $this->authorize('viewAny', Product::class);
+        $keyword = $request->input('keyword');
         $products = Product::orderBy('id', 'DESC')->paginate(4);
-        if (isset($request->keyword)) {
-            $keyword = $request->keyword;
-            $products = Product::where('name', 'like', "%$keyword%")
-                ->paginate(4);
+
+        if ($keyword) {
+            $products = Product::where('name', 'like', "%$keyword%")->paginate(4);
         }
 
-        $successMessage = '';
-        if ($request->session()->has('successMessage')) {
-            $successMessage = $request->session()->get('successMessage');
-        } elseif ($request->session()->has('successMessage1')) {
-            $successMessage = $request->session()->get('successMessage1');
-        } elseif ($request->session()->has('successMessage2')) {
-            $successMessage = $request->session()->get('successMessage2');
-        }
-        return view('admin.products.index', compact('products'));
+        return view('admin.products.index', compact('products', 'keyword'));
     }
     public function create()
     {

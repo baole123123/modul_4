@@ -44,19 +44,7 @@
                                         </span></td>
                                 @endif
                 <div class="d-flex align-items-center mb-4 pt-2">
-                    <div class="input-group quantity mr-3" style="width: 130px;">
-                        <div class="input-group-btn">
-                            <button class="btn btn-primary btn-minus">
-                                <i class="fa fa-minus"></i>
-                            </button>
-                        </div>
-                        <input type="text" class="form-control bg-secondary border-0 text-center" value="1">
-                        <div class="input-group-btn">
-                            <button class="btn btn-primary btn-plus">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                        </div>
-                    </div>
+
                     <a href="{{ route('add.to.cart', $products->id) }}" id="{{ $products->id }}" class="btn btn-danger mt-20">Thêm vào giỏ hàng</a>
                 </div>
                 <div class="d-flex pt-2">

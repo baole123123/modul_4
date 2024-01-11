@@ -2,7 +2,7 @@
 
 @section('content')
 <form action="{{ route('categorie.index') }}" method="GET">
-    <input type="text" name="keyword" placeholder="Nhập...">
+    <input type="text" name="keyword" placeholder="Nhập..." value="{{ $keyword ?? '' }}">
     <button type="submit">Tìm</button> <br> <br>
 </form>
 

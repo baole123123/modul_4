@@ -15,7 +15,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        // $this->authorize('viewAny', User::class);
+        $this->authorize('viewAny', User::class);
         $users = User::with('groups');
 
         $users = User::all();
@@ -41,7 +41,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        // $this->authorize('create', User::class);
+        $this->authorize('create', User::class);
         $groups = Group::get();
         $param = [
             'groups' => $groups,
@@ -102,7 +102,7 @@ class UserController extends Controller
 
     public function edit($id)
     {
-        // $this->authorize('view', User::class);
+        $this->authorize('view', User::class);
         $user = User::find($id);
         $groups=Group::get();
         $param = [
@@ -144,7 +144,7 @@ class UserController extends Controller
     // hiển thị form đổi mật khẩu
     public function editpass($id)
     {
-        // $this->authorize('view', User::class);
+        $this->authorize('view', User::class);
         $user = User::find($id);
         $param =[
             'user'=>$user,
@@ -155,7 +155,7 @@ class UserController extends Controller
      // hiển thị form đổi mật khẩu
      public function adminpass($id)
      {
-        //  $this->authorize('adminUpdatePass', User::class);
+         $this->authorize('adminUpdatePass', User::class);
          $user = User::find($id);
          $param =[
              'user'=>$user,
@@ -166,7 +166,7 @@ class UserController extends Controller
     // chỉ có superAdmin mới có quyền đổi mật khẩu người kh
     public function adminUpdatePass(Request $request, $id)
     {
-        // $this->authorize('adminUpdatePass', User::class);
+        $this->authorize('adminUpdatePass', User::class);
         $user = User::find($id);
         if ($request->renewpassword==$request->newpassword) {
             $item = User::find($id);

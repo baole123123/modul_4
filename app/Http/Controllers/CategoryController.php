@@ -20,16 +20,15 @@ class CategoryController extends Controller
 
     public function index(Request $request)
     {
-        // dd($request->all());
         $this->authorize('viewAny', Category::class);
+        $keyword = $request->input('keyword');
         $categories = Category::orderBy('id', 'DESC')->paginate(4);
-        if (isset($request->keyword)) {
-            $keyword = $request->keyword;
-            $categories = Category::where('name', 'like', "%$keyword%")
-                ->paginate();
+
+        if ($keyword) {
+            $categories = Category::where('name', 'like', "%$keyword%")->paginate();
         }
 
-        return view('admin.categories.index', compact('categories'));
+        return view('admin.categories.index', compact('categories', 'keyword'));
     }
     public function create()
     {

@@ -2,9 +2,9 @@
 
 @section('content')
 <form action="{{ route('products.index') }}" method="GET">
-    <input type="text" name="keyword" placeholder="Nhập...">
+    <input type="text" name="keyword" placeholder="Nhập..." value="{{ $keyword ?? '' }}">
     <button type="submit">Tìm</button> <br> <br>
-
+</form>
     <a href="{{ route('products.create') }}" class="btn btn-add">Thêm mới</a>
     <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
         <h6 class="text-white text-capitalize ps-3">Các mặt hàng</h6>

@@ -108,7 +108,7 @@ class ShopController extends Controller
         $relatedProducts = Product::where('category_id', $products->category_id)
             ->where('id', '<>', $products->id) // Loại bỏ sản phẩm hiện tại
             ->inRandomOrder() // Sắp xếp ngẫu nhiên
-            ->limit(2) // Giới hạn số lượng sản phẩm hiển thị
+            ->limit(4) // Giới hạn số lượng sản phẩm hiển thị
             ->get();
         return view('shop.detail', compact('products', 'relatedProducts'));
     }
